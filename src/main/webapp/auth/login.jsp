@@ -37,7 +37,7 @@
 <div class="box">
     <h2>Ocean View Login</h2>
 
-    <form action="/login" method="post">
+    <form action="<%=request.getContextPath()%>/login" method="post">
         Username:
         <input type="text" name="username" required>
 
