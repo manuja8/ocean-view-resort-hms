@@ -6,33 +6,39 @@ import java.sql.SQLException;
 
 public class DBConnection {
 
-    private static DBConnection instance;
+    private static DBConnection instance;   // Singleton instance
     private Connection connection;
 
-    private static final String URL = "jdbc:mysql://localhost:3306/oceanview_hms?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://localhost:3306/oceanview_hms";
     private static final String USER = "root";
-    private static final String PASSWORD = "";
+    private static final String PASS = ""; // change if needed
 
-    private DBConnection() throws SQLException {
+    // private constructor (Singleton)
+    private DBConnection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            this.connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("Database connected successfully!");
-        } catch (ClassNotFoundException e) {
-            throw new SQLException(e);
+            this.connection = DriverManager.getConnection(URL, USER, PASS);
+            System.out.println("DB Connected Successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public Connection getConnection() {
-        return connection;
-    }
-
-    public static DBConnection getInstance() throws SQLException {
+    // get instance
+    public static DBConnection getInstance() {
         if (instance == null) {
-            instance = new DBConnection();
-        } else if (instance.getConnection().isClosed()) {
-            instance = new DBConnection();
+            synchronized (DBConnection.class) {
+                if (instance == null) {
+                    instance = new DBConnection();
+                }
+            }
         }
         return instance;
     }
+
+    // return connection
+    public Connection getConnection() {
+        return connection;
+    }
 }
+

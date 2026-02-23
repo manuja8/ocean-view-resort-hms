@@ -1,13 +1,13 @@
 package com.oceanview.entity;
 
-public class User {
+public abstract class User {
 
-    private int userId;
-    private String username;
-    private String passwordHash;
-    private String roleName;
-    private boolean isActive;
-    private boolean isBlocked;
+    protected int userId;
+    protected String username;
+    protected String passwordHash;
+    protected String roleName;
+    protected boolean isActive;
+    protected boolean isBlocked;
 
     public User() {}
 
@@ -28,4 +28,9 @@ public class User {
 
     public boolean isBlocked() { return isBlocked; }
     public void setBlocked(boolean blocked) { isBlocked = blocked; }
+
+    //verify password
+    public boolean verifyPassword(String pw) {
+        return org.mindrot.jbcrypt.BCrypt.checkpw(pw, this.passwordHash);
+    }
 }

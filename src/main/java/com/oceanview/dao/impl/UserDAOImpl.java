@@ -3,6 +3,9 @@ package com.oceanview.dao.impl;
 import com.oceanview.config.DBConnection;
 import com.oceanview.dao.UserDAO;
 import com.oceanview.entity.User;
+import com.oceanview.factory.UserFactory;
+import com.oceanview.entity.Admin;
+import com.oceanview.entity.Receptionist;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,11 +31,24 @@ public class UserDAOImpl implements UserDAO {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                user = new User();
+                String role = rs.getString("role_name");
+
+                // create user via factory (UML compliant)
+                user = UserFactory.createUser(role);
+
+                if (user != null) {
+                    user.setUserId(rs.getInt("user_id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setPasswordHash(rs.getString("password_hash"));
+                    user.setRoleName(role);
+                    user.setActive(rs.getBoolean("is_active"));
+                    user.setBlocked(rs.getBoolean("is_blocked"));
+                }
+
                 user.setUserId(rs.getInt("user_id"));
                 user.setUsername(rs.getString("username"));
                 user.setPasswordHash(rs.getString("password_hash"));
-                user.setRoleName(rs.getString("role_name"));
+                user.setRoleName(role);
                 user.setActive(rs.getBoolean("is_active"));
                 user.setBlocked(rs.getBoolean("is_blocked"));
             }
@@ -44,3 +60,4 @@ public class UserDAOImpl implements UserDAO {
         return user;
     }
 }
+

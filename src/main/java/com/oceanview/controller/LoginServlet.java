@@ -1,6 +1,7 @@
+
 package com.oceanview.controller;
 
-import com.oceanview.entity.User;
+import com.oceanview.dto.UserDTO;
 import com.oceanview.service.AuthService;
 import com.oceanview.service.impl.AuthServiceImpl;
 
@@ -20,19 +21,25 @@ public class LoginServlet extends HttpServlet {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
-        User user = authService.login(username, password);
+        UserDTO user = authService.login(username, password);
 
         if (user != null) {
 
-            HttpSession session = req.getSession();
-            session.setAttribute("username", user.getUsername());
-            session.setAttribute("role", user.getRoleName());
-            session.setAttribute("userId", user.getUserId());
+            // create session
+            HttpSession session = req.getSession(true);
 
-            res.sendRedirect("dashboard/dashboard.jsp");
+            session.setAttribute("loggedUser", user);
+            session.setAttribute("username", user.getUsername());
+            session.setAttribute("role", user.getRole());
+
+            // session timeout (30 mins)
+            session.setMaxInactiveInterval(30 * 60);
+
+            res.sendRedirect("/dashboard/dashboard.jsp");
 
         } else {
-            res.sendRedirect("auth/login.jsp?error=1");
+            req.setAttribute("error", "Invalid username or password");
+            req.getRequestDispatcher("/auth/login.jsp").forward(req, res);
         }
     }
 }
