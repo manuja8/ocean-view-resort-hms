@@ -1,12 +1,16 @@
 package com.oceanview.dto;
 
+import java.time.LocalDateTime;
+
 public class PaymentDTO {
 
     private int paymentId;
-    private ReservationDTO reservation;
+    private BillDTO bill;
     private double amount;
-    private String method;
-    private String status;
+    private int paymentMethodId;
+    private int paymentStatusId;
+    private String paymentReference;
+    private LocalDateTime paymentDate;
 
     public int getPaymentId() {
         return paymentId;
@@ -16,12 +20,12 @@ public class PaymentDTO {
         this.paymentId = paymentId;
     }
 
-    public ReservationDTO getReservation() {
-        return reservation;
+    public BillDTO getBill() {
+        return bill;
     }
 
-    public void setReservation(ReservationDTO reservation) {
-        this.reservation = reservation;
+    public void setBill(BillDTO bill) {
+        this.bill = bill;
     }
 
     public double getAmount() {
@@ -31,21 +35,36 @@ public class PaymentDTO {
     public void setAmount(double amount) {
         this.amount = amount;
     }
-    
-    public String getMethod() {
-        return method;
+
+    public int getPaymentMethodId() {
+        return paymentMethodId;
     }
 
-    public void setMethod(String method) {
-        this.method = method;
+    public void setPaymentMethodId(int paymentMethodId) {
+        this.paymentMethodId = paymentMethodId;
     }
 
-
-    public String getStatus() {
-        return status;
+    public int getPaymentStatusId() {
+        return paymentStatusId;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setPaymentStatusId(int paymentStatusId) {
+        this.paymentStatusId = paymentStatusId;
+    }
+
+    public String getPaymentReference() {
+        return paymentReference;
+    }
+
+    public void setPaymentReference(String paymentReference) {
+        this.paymentReference = paymentReference;
+    }
+
+    public LocalDateTime getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(LocalDateTime paymentDate) {
+        this.paymentDate = paymentDate;
     }
 }

@@ -10,10 +10,12 @@ public class PaymentMapper {
 
         PaymentDTO dto = new PaymentDTO();
         dto.setPaymentId(payment.getPaymentId());
-        dto.setReservation(ReservationMapper.toDTO(payment.getReservation()));
+        dto.setBill(BillMapper.toDTO(payment.getBill()));
         dto.setAmount(payment.getAmount());
-        dto.setMethod(payment.getMethod());
-        dto.setStatus(payment.getStatus());
+        dto.setPaymentMethodId(payment.getPaymentMethodId());
+        dto.setPaymentStatusId(payment.getPaymentStatusId());
+        dto.setPaymentReference(payment.getPaymentReference());
+        dto.setPaymentDate(payment.getPaymentDate());
 
         return dto;
     }
@@ -23,10 +25,12 @@ public class PaymentMapper {
 
         Payment payment = new Payment();
         payment.setPaymentId(dto.getPaymentId());
-        payment.setReservation(ReservationMapper.toEntity(dto.getReservation()));
+        payment.setBill(BillMapper.toEntity(dto.getBill()));
         payment.setAmount(dto.getAmount());
-        payment.setMethod(dto.getMethod());
-        payment.setStatus(dto.getStatus());
+        payment.setPaymentMethodId(dto.getPaymentMethodId());
+        payment.setPaymentStatusId(dto.getPaymentStatusId());
+        payment.setPaymentReference(dto.getPaymentReference());
+        payment.setPaymentDate(dto.getPaymentDate());
 
         return payment;
     }

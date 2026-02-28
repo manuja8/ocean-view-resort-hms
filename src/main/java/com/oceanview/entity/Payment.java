@@ -1,15 +1,16 @@
 package com.oceanview.entity;
 
+import java.time.LocalDateTime;
+
 public class Payment {
 
     private int paymentId;
-    private Reservation reservation;
+    private Bill bill;
     private double amount;
-    private String method;
-    private String status;
-
-    public Payment() {
-    }
+    private int paymentMethodId;
+    private int paymentStatusId;
+    private String paymentReference;
+    private LocalDateTime paymentDate;
 
     public int getPaymentId() {
         return paymentId;
@@ -19,12 +20,12 @@ public class Payment {
         this.paymentId = paymentId;
     }
 
-    public Reservation getReservation() {
-        return reservation;
+    public Bill getBill() {
+        return bill;
     }
 
-    public void setReservation(Reservation reservation) {
-        this.reservation = reservation;
+    public void setBill(Bill bill) {
+        this.bill = bill;
     }
 
     public double getAmount() {
@@ -35,19 +36,35 @@ public class Payment {
         this.amount = amount;
     }
 
-    public String getMethod() {
-        return method;
+    public int getPaymentMethodId() {
+        return paymentMethodId;
     }
 
-    public void setMethod(String method) {
-        this.method = method;
+    public void setPaymentMethodId(int paymentMethodId) {
+        this.paymentMethodId = paymentMethodId;
     }
 
-    public String getStatus() {
-        return status;
+    public int getPaymentStatusId() {
+        return paymentStatusId;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setPaymentStatusId(int paymentStatusId) {
+        this.paymentStatusId = paymentStatusId;
+    }
+
+    public String getPaymentReference() {
+        return paymentReference;
+    }
+
+    public void setPaymentReference(String paymentReference) {
+        this.paymentReference = paymentReference;
+    }
+
+    public LocalDateTime getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(LocalDateTime paymentDate) {
+        this.paymentDate = paymentDate;
     }
 }

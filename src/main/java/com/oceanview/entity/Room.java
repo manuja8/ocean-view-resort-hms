@@ -7,7 +7,8 @@ public class Room {
     private double rate;
     private String availabilityStatus;
 
-    public Room() {}
+    public Room() {
+    }
 
     public Room(int roomId, String roomType, double rate, String availabilityStatus) {
         this.roomId = roomId;
@@ -15,6 +16,7 @@ public class Room {
         this.rate = rate;
         this.availabilityStatus = availabilityStatus;
     }
+
     public int getRoomId() {
         return roomId;
     }

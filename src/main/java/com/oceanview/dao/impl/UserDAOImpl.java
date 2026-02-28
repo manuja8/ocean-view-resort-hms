@@ -33,7 +33,6 @@ public class UserDAOImpl implements UserDAO {
             if (rs.next()) {
                 String role = rs.getString("role_name");
 
-                // create user via factory (UML compliant)
                 user = UserFactory.createUser(role);
 
                 if (user != null) {
@@ -44,13 +43,6 @@ public class UserDAOImpl implements UserDAO {
                     user.setActive(rs.getBoolean("is_active"));
                     user.setBlocked(rs.getBoolean("is_blocked"));
                 }
-
-                user.setUserId(rs.getInt("user_id"));
-                user.setUsername(rs.getString("username"));
-                user.setPasswordHash(rs.getString("password_hash"));
-                user.setRoleName(role);
-                user.setActive(rs.getBoolean("is_active"));
-                user.setBlocked(rs.getBoolean("is_blocked"));
             }
 
         } catch (Exception e) {
@@ -58,6 +50,70 @@ public class UserDAOImpl implements UserDAO {
         }
 
         return user;
+
+
+    }
+
+    @Override
+    public int save(User user) {
+
+        int generatedId = 0;
+
+        try {
+            Connection con = DBConnection.getInstance().getConnection();
+
+            String sql = "INSERT INTO users (username, full_name, address, contact_no, role_id, password_hash, expiry_date) " +
+                    "VALUES (?, ?, ?, ?, (SELECT role_id FROM user_roles WHERE role_name=?), ?, NOW() + INTERVAL 1 YEAR)";
+
+            PreparedStatement ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+
+            ps.setString(1, user.getUsername());
+            ps.setString(2, "Temp Name"); // adjust if needed
+            ps.setString(3, "Temp Address");
+            ps.setString(4, "0000000000");
+            ps.setString(5, user.getRoleName());
+            ps.setString(6, user.getPasswordHash());
+
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                generatedId = rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return generatedId;
+    }
+
+    @Override
+    public void update(User user) {
+
+    }
+
+    @Override
+    public void delete(int userId) {
+
+    }
+
+    @Override
+    public User findById(int userId) {
+
+        return null;
+    }
+
+    @Override
+    public java.util.List<User> findAll() {
+
+        return null;
+    }
+
+    @Override
+    public java.util.List<User> search(String keyword) {
+
+        return null;
     }
 }
 
