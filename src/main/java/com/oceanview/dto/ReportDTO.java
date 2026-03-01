@@ -2,40 +2,80 @@ package com.oceanview.dto;
 
 public class ReportDTO {
 
-    private int reportId;
-    private String type;
-    private String dateRange;
-    private String data;
+    private int totalReservations;
+    private int totalGuests;
+    private int totalRooms;
 
-    public int getReportId() {
-        return reportId;
+    private int totalBills;
+    private int totalPayments;
+
+    private int paidBills;
+    private int unpaidBills;
+
+    private double totalRevenue;
+
+    // Getters and Setters
+    public int getTotalReservations() {
+        return totalReservations;
     }
 
-    public void setReportId(int reportId) {
-        this.reportId = reportId;
+    public void setTotalReservations(int totalReservations) {
+        this.totalReservations = totalReservations;
     }
 
-    public String getType() {
-        return type;
+    public int getTotalGuests() {
+        return totalGuests;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTotalGuests(int totalGuests) {
+        this.totalGuests = totalGuests;
     }
 
-    public String getDateRange() {
-        return dateRange;
+    public int getTotalRooms() {
+        return totalRooms;
     }
 
-    public void setDateRange(String dateRange) {
-        this.dateRange = dateRange;
+    public void setTotalRooms(int totalRooms) {
+        this.totalRooms = totalRooms;
     }
 
-    public String getData() {
-        return data;
+    public int getTotalBills() {
+        return totalBills;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setTotalBills(int totalBills) {
+        this.totalBills = totalBills;
+    }
+
+    public int getTotalPayments() {
+        return totalPayments;
+    }
+
+    public void setTotalPayments(int totalPayments) {
+        this.totalPayments = totalPayments;
+    }
+
+    public int getPaidBills() {
+        return paidBills;
+    }
+
+    public void setPaidBills(int paidBills) {
+        this.paidBills = paidBills;
+    }
+
+    public int getUnpaidBills() {
+        return unpaidBills;
+    }
+
+    public void setUnpaidBills(int unpaidBills) {
+        this.unpaidBills = unpaidBills;
+    }
+
+    public double getTotalRevenue() {
+        return totalRevenue;
+    }
+
+    public void setTotalRevenue(double totalRevenue) {
+        this.totalRevenue = totalRevenue;
     }
 }
