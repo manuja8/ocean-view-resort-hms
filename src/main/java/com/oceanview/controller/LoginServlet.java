@@ -1,4 +1,3 @@
-
 package com.oceanview.controller;
 
 import com.oceanview.dto.UserDTO;
@@ -35,7 +34,7 @@ public class LoginServlet extends HttpServlet {
             // session timeout (30 mins)
             session.setMaxInactiveInterval(30 * 60);
 
-            res.sendRedirect("/dashboard/dashboard.jsp");
+            res.sendRedirect(req.getContextPath() + "/dashboard/dashboard.jsp");
 
         } else {
             req.setAttribute("error", "Invalid username or password");
