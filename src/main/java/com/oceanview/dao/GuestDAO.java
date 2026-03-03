@@ -5,10 +5,9 @@ import com.oceanview.entity.Guest;
 import java.util.List;
 
 public interface GuestDAO {
+    int save(Guest guest, int createdByUserId);
 
-    int save(Guest guest);
-
-    void update(Guest guest);
+    boolean update(Guest guest, int updatedByUserId);
 
     boolean delete(int guestId);
 
@@ -16,6 +15,5 @@ public interface GuestDAO {
 
     List<Guest> findAll();
 
-    List<Guest> search(String query);
-
+    List<Guest> search(String q);
 }
