@@ -1,14 +1,22 @@
 package com.oceanview.dto;
 
 public class ComplaintDTO {
-
     private int complaintId;
-    private GuestDTO guest;
-    private ReservationDTO reservation;
+
+    private int guestId;
+    private String guestName;
+    private String guestContact;
+
+    private Integer reservationId;
+    private String reservationNumber;
+
     private String subject;
     private String description;
-    private String status;
-    private String priority;
+
+    private String status;   // open, in_progress, resolved, closed
+    private String priority; // low, medium, high
+
+    private String createdAt;
 
     public int getComplaintId() {
         return complaintId;
@@ -18,20 +26,44 @@ public class ComplaintDTO {
         this.complaintId = complaintId;
     }
 
-    public GuestDTO getGuest() {
-        return guest;
+    public int getGuestId() {
+        return guestId;
     }
 
-    public void setGuest(GuestDTO guest) {
-        this.guest = guest;
+    public void setGuestId(int guestId) {
+        this.guestId = guestId;
     }
 
-    public ReservationDTO getReservation() {
-        return reservation;
+    public String getGuestName() {
+        return guestName;
     }
 
-    public void setReservation(ReservationDTO reservation) {
-        this.reservation = reservation;
+    public void setGuestName(String guestName) {
+        this.guestName = guestName;
+    }
+
+    public String getGuestContact() {
+        return guestContact;
+    }
+
+    public void setGuestContact(String guestContact) {
+        this.guestContact = guestContact;
+    }
+
+    public Integer getReservationId() {
+        return reservationId;
+    }
+
+    public void setReservationId(Integer reservationId) {
+        this.reservationId = reservationId;
+    }
+
+    public String getReservationNumber() {
+        return reservationNumber;
+    }
+
+    public void setReservationNumber(String reservationNumber) {
+        this.reservationNumber = reservationNumber;
     }
 
     public String getSubject() {
@@ -64,5 +96,13 @@ public class ComplaintDTO {
 
     public void setPriority(String priority) {
         this.priority = priority;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }

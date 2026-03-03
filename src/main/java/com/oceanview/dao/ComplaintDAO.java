@@ -1,16 +1,18 @@
 package com.oceanview.dao;
 
+import com.oceanview.dto.ComplaintDTO;
 import com.oceanview.entity.Complaint;
 
 import java.util.List;
 
 public interface ComplaintDAO {
+    int save(Complaint complaint);
 
-    void save(Complaint complaint);
+    boolean update(Complaint complaint);
 
-    void updateStatus(int complaintId, String status);
+    boolean delete(int complaintId);
 
-    List<Complaint> findAll();
+    ComplaintDTO findById(int complaintId);
 
-    List<Complaint> findByStatus(String status);
+    List<ComplaintDTO> search(String q, String status, String priority);
 }
