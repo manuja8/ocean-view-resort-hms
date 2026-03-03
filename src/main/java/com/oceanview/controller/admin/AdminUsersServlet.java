@@ -1,13 +1,12 @@
 package com.oceanview.controller.admin;
 
-import com.oceanview.dao.UserDAO;
 import com.oceanview.dao.UserRoleDAO;
-import com.oceanview.dao.impl.UserDAOImpl;
 import com.oceanview.dao.impl.UserRoleDAOImpl;
 import com.oceanview.dto.UserRoleDTO;
 import com.oceanview.entity.User;
 import com.oceanview.factory.UserFactory;
-import org.mindrot.jbcrypt.BCrypt;
+import com.oceanview.service.UserService;
+import com.oceanview.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,12 +14,11 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @WebServlet("/admin/users")
 public class AdminUsersServlet extends HttpServlet {
 
-    private final UserDAO userDAO = new UserDAOImpl();
+    private final UserService userService = new UserServiceImpl();
     private final UserRoleDAO roleDAO = new UserRoleDAOImpl();
 
     private static final DateTimeFormatter DT_LOCAL = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
@@ -48,12 +46,16 @@ public class AdminUsersServlet extends HttpServlet {
 
         if ("create".equalsIgnoreCase(mode)) {
             req.setAttribute("roles", roleDAO.findAll());
+
             // empty user for form binding (default receptionist object)
             User u = UserFactory.createUser("receptionist");
             if (u != null) {
                 u.setActive(true);
                 u.setBlocked(false);
+                u.setExpiryDate(LocalDateTime.now().plusYears(1));
+                req.setAttribute("expiryDateValue", u.getExpiryDate().format(DT_LOCAL));
             }
+
             req.setAttribute("user", u);
             req.getRequestDispatcher("/WEB-INF/views/admin/users/form.jsp").forward(req, resp);
             return;
@@ -61,12 +63,14 @@ public class AdminUsersServlet extends HttpServlet {
 
         if ("edit".equalsIgnoreCase(mode)) {
             int id = Integer.parseInt(req.getParameter("id"));
-            User u = userDAO.findById(id);
+            User u = userService.getById(id);
+
             if (u == null) {
                 req.getSession().setAttribute("flashError", "User not found.");
                 resp.sendRedirect(req.getContextPath() + "/admin/users");
                 return;
             }
+
             req.setAttribute("roles", roleDAO.findAll());
             req.setAttribute("user", u);
 
@@ -81,7 +85,7 @@ public class AdminUsersServlet extends HttpServlet {
 
         // list
         String q = req.getParameter("q");
-        req.setAttribute("users", (q == null || q.trim().isEmpty()) ? userDAO.findAll() : userDAO.search(q));
+        req.setAttribute("users", userService.list(q));
         req.getRequestDispatcher("/WEB-INF/views/admin/users/list.jsp").forward(req, resp);
     }
 
@@ -98,21 +102,25 @@ public class AdminUsersServlet extends HttpServlet {
         }
 
         try {
+
             if ("delete".equalsIgnoreCase(mode)) {
                 int id = Integer.parseInt(req.getParameter("id"));
-                userDAO.delete(id);
+                userService.delete(id);
                 req.getSession().setAttribute("flashSuccess", "User deleted.");
                 resp.sendRedirect(req.getContextPath() + "/admin/users");
                 return;
             }
 
+
             int roleId = Integer.parseInt(req.getParameter("roleId"));
             UserRoleDTO role = roleDAO.findById(roleId);
             if (role == null) throw new IllegalArgumentException("Invalid role");
 
+
             User u = UserFactory.createUser(role.getRoleName());
             if (u == null) throw new IllegalArgumentException("Invalid role");
 
+            // set fields from request
             u.setUsername(req.getParameter("username"));
             u.setFullName(req.getParameter("fullName"));
             u.setAddress(req.getParameter("address"));
@@ -123,6 +131,7 @@ public class AdminUsersServlet extends HttpServlet {
             u.setActive("1".equals(req.getParameter("isActive")) || "true".equalsIgnoreCase(req.getParameter("isActive")));
             u.setBlocked("1".equals(req.getParameter("isBlocked")) || "true".equalsIgnoreCase(req.getParameter("isBlocked")));
 
+            
             String expiryStr = req.getParameter("expiryDate");
             if (expiryStr == null || expiryStr.trim().isEmpty()) {
                 u.setExpiryDate(LocalDateTime.now().plusYears(1));
@@ -134,65 +143,32 @@ public class AdminUsersServlet extends HttpServlet {
 
             if ("edit".equalsIgnoreCase(mode)) {
                 u.setUserId(Integer.parseInt(req.getParameter("id")));
-                u.setUpdatedByUserId(adminUserId);
-
-                // password optional on edit
-                if (plainPassword != null && !plainPassword.trim().isEmpty()) {
-                    u.setPasswordHash(BCrypt.hashpw(plainPassword, BCrypt.gensalt()));
-                } else {
-                    u.setPasswordHash(null); // DAO keeps old password_hash
-                }
-
-                userDAO.update(u);
+                userService.update(u, adminUserId, plainPassword);
                 req.getSession().setAttribute("flashSuccess", "User updated.");
             } else {
-                // create requires password
-                if (plainPassword == null || plainPassword.trim().isEmpty()) {
-                    throw new IllegalArgumentException("Password is required to create a user.");
-                }
-                u.setPasswordHash(BCrypt.hashpw(plainPassword, BCrypt.gensalt()));
-                u.setCreatedByUserId(adminUserId);
-
-                userDAO.save(u);
+                userService.create(u, adminUserId, plainPassword);
                 req.getSession().setAttribute("flashSuccess", "User created.");
             }
 
             resp.sendRedirect(req.getContextPath() + "/admin/users");
 
         } catch (Exception ex) {
-            req.setAttribute("error", ex.getMessage());
+
+            req.setAttribute("error", userService.friendlyMessage(ex));
             req.setAttribute("roles", roleDAO.findAll());
             req.setAttribute("user", userFromRequest(req));
-            req.setAttribute("error", message(ex));
             req.setAttribute("mode", mode.isBlank() ? "create" : mode);
+
             if (req.getParameter("expiryDate") != null)
                 req.setAttribute("expiryDateValue", req.getParameter("expiryDate"));
+
             req.getRequestDispatcher("/WEB-INF/views/admin/users/form.jsp").forward(req, resp);
-            return;
-
         }
-    }
-
-    private String message(Exception ex) {
-        Throwable t = ex;
-        while (t.getCause() != null) t = t.getCause();
-
-        String msg = t.getMessage() == null ? ex.getMessage() : t.getMessage();
-        if (msg == null) return "Operation failed.";
-
-        if (msg.contains("Duplicate entry") || msg.contains("1062")) {
-            String lower = msg.toLowerCase();
-            if (lower.contains("username")) return "Username already exists. Please choose another one.";
-            if (lower.contains("contact_no") || lower.contains("contact"))
-                return "Contact number already exists. Please use another.";
-            return "Duplicate value detected. Please check again.";
-        }
-
-        return msg;
     }
 
     private User userFromRequest(HttpServletRequest req) {
-        // fallback just to re-fill inputs
+
+
         User u = UserFactory.createUser("receptionist");
         if (u == null) return null;
 
