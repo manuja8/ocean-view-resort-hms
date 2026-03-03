@@ -1,16 +1,18 @@
 package com.oceanview.dto;
 
-import java.time.LocalDateTime;
-
 public class PaymentDTO {
-
     private int paymentId;
-    private BillDTO bill;
+    private int billId;
     private double amount;
+
     private int paymentMethodId;
+    private String paymentMethodName;
+
     private int paymentStatusId;
+    private String paymentStatusName;
+
     private String paymentReference;
-    private LocalDateTime paymentDate;
+    private String paymentDate; // for display
 
     public int getPaymentId() {
         return paymentId;
@@ -20,12 +22,12 @@ public class PaymentDTO {
         this.paymentId = paymentId;
     }
 
-    public BillDTO getBill() {
-        return bill;
+    public int getBillId() {
+        return billId;
     }
 
-    public void setBill(BillDTO bill) {
-        this.bill = bill;
+    public void setBillId(int billId) {
+        this.billId = billId;
     }
 
     public double getAmount() {
@@ -44,12 +46,28 @@ public class PaymentDTO {
         this.paymentMethodId = paymentMethodId;
     }
 
+    public String getPaymentMethodName() {
+        return paymentMethodName;
+    }
+
+    public void setPaymentMethodName(String paymentMethodName) {
+        this.paymentMethodName = paymentMethodName;
+    }
+
     public int getPaymentStatusId() {
         return paymentStatusId;
     }
 
     public void setPaymentStatusId(int paymentStatusId) {
         this.paymentStatusId = paymentStatusId;
+    }
+
+    public String getPaymentStatusName() {
+        return paymentStatusName;
+    }
+
+    public void setPaymentStatusName(String paymentStatusName) {
+        this.paymentStatusName = paymentStatusName;
     }
 
     public String getPaymentReference() {
@@ -60,11 +78,11 @@ public class PaymentDTO {
         this.paymentReference = paymentReference;
     }
 
-    public LocalDateTime getPaymentDate() {
+    public String getPaymentDate() {
         return paymentDate;
     }
 
-    public void setPaymentDate(LocalDateTime paymentDate) {
+    public void setPaymentDate(String paymentDate) {
         this.paymentDate = paymentDate;
     }
 }
