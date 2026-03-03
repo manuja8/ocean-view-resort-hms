@@ -5,8 +5,11 @@ import java.time.LocalDate;
 public class ReservationDTO {
 
     private int reservationNo;
+    private String reservationNumber;
+
     private GuestDTO guest;
     private RoomDTO room;
+
     private LocalDate checkIn;
     private LocalDate checkOut;
     private String status;
@@ -17,6 +20,14 @@ public class ReservationDTO {
 
     public void setReservationNo(int reservationNo) {
         this.reservationNo = reservationNo;
+    }
+
+    public String getReservationNumber() {
+        return reservationNumber;
+    }
+
+    public void setReservationNumber(String reservationNumber) {
+        this.reservationNumber = reservationNumber;
     }
 
     public GuestDTO getGuest() {
@@ -35,7 +46,6 @@ public class ReservationDTO {
         this.room = room;
     }
 
-
     public LocalDate getCheckIn() {
         return checkIn;
     }
@@ -52,7 +62,6 @@ public class ReservationDTO {
         this.checkOut = checkOut;
     }
 
-
     public String getStatus() {
         return status;
     }
@@ -60,5 +69,4 @@ public class ReservationDTO {
     public void setStatus(String status) {
         this.status = status;
     }
-
 }

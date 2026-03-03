@@ -2,17 +2,20 @@ package com.oceanview.dao;
 
 import com.oceanview.entity.Reservation;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ReservationDAO {
 
     int save(Reservation reservation);
 
-    void update(Reservation reservation);
+    boolean update(Reservation reservation);
+
+    boolean delete(int reservationId);
 
     Reservation findById(int id);
 
-    List<Reservation> findAll();
+    List<Reservation> search(String q, String status);
 
-    List<Reservation> search(String keyword);
+    boolean hasOverlap(int roomId, LocalDate checkIn, LocalDate checkOut, Integer excludeReservationId);
 }

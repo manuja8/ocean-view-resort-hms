@@ -13,133 +13,218 @@ import java.util.List;
 
 public class ReservationDAOImpl implements ReservationDAO {
 
-    private Connection con = DBConnection.getInstance().getConnection();
-
     @Override
-    public int save(Reservation reservation) {
-        try {
-            String sql = "INSERT INTO reservations (guest_id, room_id, check_in, check_out, status) VALUES (?, ?, ?, ?, ?)";
+    public int save(Reservation r) {
 
-            PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        String sql = "INSERT INTO reservations " +
+                "(reservation_number, guest_id, room_id, check_in_date, check_out_date, status, created_by_user_id, created_at, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
-            ps.setInt(1, reservation.getGuest().getGuestId());
-            ps.setInt(2, reservation.getRoom().getRoomId());
-            ps.setDate(3, Date.valueOf(reservation.getCheckIn()));
-            ps.setDate(4, Date.valueOf(reservation.getCheckOut()));
-            ps.setString(5, reservation.getStatus());
+        try (Connection con = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, r.getReservationNumber());
+            ps.setInt(2, r.getGuest().getGuestId());
+            ps.setInt(3, r.getRoom().getRoomId());
+            ps.setTimestamp(4, Timestamp.valueOf(r.getCheckIn().atStartOfDay()));
+            ps.setTimestamp(5, Timestamp.valueOf(r.getCheckOut().atStartOfDay()));
+            ps.setString(6, normalizeStatus(r.getStatus()));
+            ps.setInt(7, r.getCreatedByUserId());
 
             ps.executeUpdate();
 
-            ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next()) return rs.getInt(1);
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Saving reservation failed", e);
         }
-
-        return 0;
     }
 
     @Override
-    public void update(Reservation reservation) {
-        try {
-            String sql = "UPDATE reservations SET guest_id=?, room_id=?, check_in=?, check_out=?, status=? WHERE reservation_id=?";
+    public boolean update(Reservation r) {
 
-            PreparedStatement ps = con.prepareStatement(sql);
+        String sql = "UPDATE reservations SET " +
+                "guest_id=?, room_id=?, check_in_date=?, check_out_date=?, status=?, updated_by_user_id=?, updated_at=NOW() " +
+                "WHERE reservation_id=?";
 
-            ps.setInt(1, reservation.getGuest().getGuestId());
-            ps.setInt(2, reservation.getRoom().getRoomId());
-            ps.setDate(3, Date.valueOf(reservation.getCheckIn()));
-            ps.setDate(4, Date.valueOf(reservation.getCheckOut()));
-            ps.setString(5, reservation.getStatus());
-            ps.setInt(6, reservation.getReservationNo());
+        try (Connection con = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.executeUpdate();
+            ps.setInt(1, r.getGuest().getGuestId());
+            ps.setInt(2, r.getRoom().getRoomId());
+            ps.setTimestamp(3, Timestamp.valueOf(r.getCheckIn().atStartOfDay()));
+            ps.setTimestamp(4, Timestamp.valueOf(r.getCheckOut().atStartOfDay()));
+            ps.setString(5, normalizeStatus(r.getStatus()));
+            ps.setInt(6, r.getUpdatedByUserId() == null ? 0 : r.getUpdatedByUserId());
+            ps.setInt(7, r.getReservationNo());
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            return ps.executeUpdate() == 1;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Updating reservation failed", e);
+        }
+    }
+
+    @Override
+    public boolean delete(int reservationId) {
+        String sql = "DELETE FROM reservations WHERE reservation_id = ?";
+
+        try (Connection con = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, reservationId);
+            return ps.executeUpdate() == 1;
+
+        } catch (SQLException e) {
+            // likely FK restrict from bills
+            throw new RuntimeException("Cannot delete reservation (may have bills).", e);
         }
     }
 
     @Override
     public Reservation findById(int id) {
-        try {
-            String sql = "SELECT * FROM reservations WHERE reservation_id=?";
-            PreparedStatement ps = con.prepareStatement(sql);
+
+        String sql =
+                "SELECT r.reservation_id, r.reservation_number, r.guest_id, r.room_id, r.check_in_date, r.check_out_date, r.status, " +
+                        "g.full_name AS guest_name, g.contact_no AS guest_contact_no, g.email AS guest_email, " +
+                        "rm.room_number, rm.status AS room_status, rt.room_type_id, rt.type_name, rt.price AS room_type_price " +
+                        "FROM reservations r " +
+                        "JOIN guests g ON g.guest_id = r.guest_id " +
+                        "JOIN rooms rm ON rm.room_id = r.room_id " +
+                        "JOIN room_types rt ON rt.room_type_id = rm.room_type_id " +
+                        "WHERE r.reservation_id = ?";
+
+        try (Connection con = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
 
-            if (rs.next()) {
-                return extractReservation(rs);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? map(rs) : null;
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Find reservation by id failed", e);
         }
-
-        return null;
     }
 
     @Override
-    public List<Reservation> findAll() {
+    public List<Reservation> search(String q, String status) {
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT r.reservation_id, r.reservation_number, r.guest_id, r.room_id, r.check_in_date, r.check_out_date, r.status, " +
+                        "g.full_name AS guest_name, g.contact_no AS guest_contact_no, g.email AS guest_email, " +
+                        "rm.room_number, rm.status AS room_status, rt.room_type_id, rt.type_name, rt.price AS room_type_price " +
+                        "FROM reservations r " +
+                        "JOIN guests g ON g.guest_id = r.guest_id " +
+                        "JOIN rooms rm ON rm.room_id = r.room_id " +
+                        "JOIN room_types rt ON rt.room_type_id = rm.room_type_id " +
+                        "WHERE 1=1 "
+        );
+
+        List<Object> params = new ArrayList<>();
+
+        if (q != null && !q.trim().isEmpty()) {
+            sql.append(" AND (r.reservation_number LIKE ? OR g.full_name LIKE ? OR rm.room_number LIKE ? OR r.status LIKE ?) ");
+            String like = "%" + q.trim() + "%";
+            params.add(like);
+            params.add(like);
+            params.add(like);
+            params.add(like);
+        }
+
+        if (status != null && !status.trim().isEmpty()) {
+            sql.append(" AND LOWER(r.status) = ? ");
+            params.add(status.trim().toLowerCase());
+        }
+
+        sql.append(" ORDER BY r.reservation_id DESC");
+
         List<Reservation> list = new ArrayList<>();
 
-        try {
-            String sql = "SELECT * FROM reservations";
-            PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (Connection con = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql.toString())) {
 
-            while (rs.next()) {
-                list.add(extractReservation(rs));
+            for (int i = 0; i < params.size(); i++) ps.setObject(i + 1, params.get(i));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(map(rs));
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Search reservations failed", e);
         }
 
         return list;
     }
 
     @Override
-    public List<Reservation> search(String keyword) {
-        List<Reservation> list = new ArrayList<>();
+    public boolean hasOverlap(int roomId, LocalDate checkIn, LocalDate checkOut, Integer excludeReservationId) {
 
-        try {
-            String sql = "SELECT * FROM reservations WHERE status LIKE ?";
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, "%" + keyword + "%");
+        String sql =
+                "SELECT COUNT(*) " +
+                        "FROM reservations " +
+                        "WHERE room_id = ? " +
+                        "AND LOWER(status) <> 'cancelled' " +
+                        "AND check_in_date < ? " +
+                        "AND check_out_date > ? " +
+                        (excludeReservationId != null ? "AND reservation_id <> ? " : "");
 
-            ResultSet rs = ps.executeQuery();
+        try (Connection con = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-            while (rs.next()) {
-                list.add(extractReservation(rs));
+            int i = 1;
+            ps.setInt(i++, roomId);
+            ps.setTimestamp(i++, Timestamp.valueOf(checkOut.atStartOfDay())); // existing.start < new.end
+            ps.setTimestamp(i++, Timestamp.valueOf(checkIn.atStartOfDay()));  // existing.end > new.start
+            if (excludeReservationId != null) ps.setInt(i, excludeReservationId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && rs.getInt(1) > 0;
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Overlap check failed", e);
         }
-
-        return list;
     }
 
-    private Reservation extractReservation(ResultSet rs) throws SQLException {
+    private Reservation map(ResultSet rs) throws SQLException {
 
-        Reservation reservation = new Reservation();
+        Reservation r = new Reservation();
+        r.setReservationNo(rs.getInt("reservation_id"));
+        r.setReservationNumber(rs.getString("reservation_number"));
+        r.setStatus(rs.getString("status"));
 
-        reservation.setReservationNo(rs.getInt("reservation_id"));
+        Timestamp cin = rs.getTimestamp("check_in_date");
+        Timestamp cout = rs.getTimestamp("check_out_date");
+        if (cin != null) r.setCheckIn(cin.toLocalDateTime().toLocalDate());
+        if (cout != null) r.setCheckOut(cout.toLocalDateTime().toLocalDate());
 
-        Guest guest = new Guest();
-        guest.setGuestId(rs.getInt("guest_id"));
-        reservation.setGuest(guest);
+        Guest g = new Guest();
+        g.setGuestId(rs.getInt("guest_id"));
+        g.setFullName(rs.getString("guest_name"));
+        g.setContactNo(rs.getString("guest_contact_no"));
+        g.setEmail(rs.getString("guest_email"));
+        r.setGuest(g);
 
         Room room = new Room();
         room.setRoomId(rs.getInt("room_id"));
-        reservation.setRoom(room);
+        room.setRoomNumber(rs.getString("room_number"));
+        room.setStatus(rs.getString("room_status"));
+        room.setRoomTypeId(rs.getInt("room_type_id"));
+        r.setRoom(room);
 
-        reservation.setCheckIn(rs.getDate("check_in").toLocalDate());
-        reservation.setCheckOut(rs.getDate("check_out").toLocalDate());
-        reservation.setStatus(rs.getString("status"));
+        r.setRoomTypePrice(rs.getDouble("room_type_price"));
 
-        return reservation;
+        return r;
+    }
+
+    private String normalizeStatus(String status) {
+        if (status == null) return "booked";
+        String s = status.trim().toLowerCase();
+        if (s.isEmpty()) return "booked";
+        return s;
     }
 }
