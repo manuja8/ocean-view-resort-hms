@@ -7,6 +7,8 @@ import java.util.List;
 public interface UserDAO {
     User login(String username);
 
+    void updateLastLogin(int userId);
+
     int save(User user);
 
     void update(User user);
