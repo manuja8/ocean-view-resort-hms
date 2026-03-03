@@ -68,6 +68,8 @@ public class ReportDAOImpl implements ReportDAO {
         }
     }
 
+    // ------------------- OCCUPANCY -------------------
+
     @Override
     public int countRooms() {
         String sql = "SELECT COUNT(*) FROM rooms";
@@ -89,7 +91,7 @@ public class ReportDAOImpl implements ReportDAO {
         );
         List<Object> params = new ArrayList<>();
 
-        // Use COALESCE(check_in_date, created_at) so even “booked with null check_in_date” is counted.
+        // Use COALESCE(check_in_date, created_at) so even booked reservations with null check_in_date are counted.
         appendDateRange(sql, params, "COALESCE(check_in_date, created_at)", from, to);
 
         return queryInt(sql.toString(), params);
@@ -108,6 +110,8 @@ public class ReportDAOImpl implements ReportDAO {
         return queryInt(sql.toString(), params);
     }
 
+    // ------------------- BILLS / REVENUE -------------------
+
     @Override
     public int countBills(LocalDate from, LocalDate to) {
         StringBuilder sql = new StringBuilder(
@@ -118,44 +122,77 @@ public class ReportDAOImpl implements ReportDAO {
         return queryInt(sql.toString(), params);
     }
 
+    /**
+     * "Paid Bill" = bill has at least one COMPLETED payment.
+     */
     @Override
     public int countPaidBills(LocalDate from, LocalDate to) {
         StringBuilder sql = new StringBuilder(
                 "SELECT COUNT(DISTINCT b.bill_id) " +
                         "FROM bills b " +
-                        "JOIN payments p ON p.bill_id = b.bill_id " +
-                        "WHERE b.is_canceled = 0"
+                        "WHERE b.is_canceled = 0 " +
+                        "AND EXISTS ( " +
+                        "   SELECT 1 " +
+                        "   FROM payments p " +
+                        "   JOIN payment_statuses ps ON ps.payment_status_id = p.payment_status_id " +
+                        "   WHERE p.bill_id = b.bill_id " +
+                        "   AND LOWER(ps.status_name) = 'completed' " +
+                        ")"
         );
         List<Object> params = new ArrayList<>();
         appendDateRange(sql, params, "b.bill_date", from, to);
         return queryInt(sql.toString(), params);
     }
 
+    /**
+     * "Unpaid Bill" = bill has NO completed payments (pending/failed payments still count as unpaid).
+     */
     @Override
     public int countUnpaidBills(LocalDate from, LocalDate to) {
         StringBuilder sql = new StringBuilder(
-                "SELECT COUNT(*) FROM bills b " +
+                "SELECT COUNT(*) " +
+                        "FROM bills b " +
                         "WHERE b.is_canceled = 0 " +
-                        "AND NOT EXISTS (SELECT 1 FROM payments p WHERE p.bill_id = b.bill_id)"
+                        "AND NOT EXISTS ( " +
+                        "   SELECT 1 " +
+                        "   FROM payments p " +
+                        "   JOIN payment_statuses ps ON ps.payment_status_id = p.payment_status_id " +
+                        "   WHERE p.bill_id = b.bill_id " +
+                        "   AND LOWER(ps.status_name) = 'completed' " +
+                        ")"
         );
         List<Object> params = new ArrayList<>();
         appendDateRange(sql, params, "b.bill_date", from, to);
         return queryInt(sql.toString(), params);
     }
 
+    /**
+     * Paid revenue = SUM(total_amount) of bills that have at least one COMPLETED payment.
+     */
     @Override
     public double sumPaidRevenue(LocalDate from, LocalDate to) {
         StringBuilder sql = new StringBuilder(
                 "SELECT COALESCE(SUM(b.total_amount), 0) " +
                         "FROM bills b " +
                         "WHERE b.is_canceled = 0 " +
-                        "AND EXISTS (SELECT 1 FROM payments p WHERE p.bill_id = b.bill_id)"
+                        "AND EXISTS ( " +
+                        "   SELECT 1 " +
+                        "   FROM payments p " +
+                        "   JOIN payment_statuses ps ON ps.payment_status_id = p.payment_status_id " +
+                        "   WHERE p.bill_id = b.bill_id " +
+                        "   AND LOWER(ps.status_name) = 'completed' " +
+                        ")"
         );
         List<Object> params = new ArrayList<>();
         appendDateRange(sql, params, "b.bill_date", from, to);
         return queryDouble(sql.toString(), params);
     }
 
+    // ------------------- PAYMENTS -------------------
+
+    /**
+     * Total payment records in range (all statuses).
+     */
     @Override
     public int countPayments(LocalDate from, LocalDate to) {
         StringBuilder sql = new StringBuilder(
@@ -166,13 +203,19 @@ public class ReportDAOImpl implements ReportDAO {
         return queryInt(sql.toString(), params);
     }
 
+    /**
+     * Total amount received = SUM of COMPLETED payments only.
+     */
     @Override
     public double sumPayments(LocalDate from, LocalDate to) {
         StringBuilder sql = new StringBuilder(
-                "SELECT COALESCE(SUM(amount), 0) FROM payments WHERE 1=1"
+                "SELECT COALESCE(SUM(p.amount), 0) " +
+                        "FROM payments p " +
+                        "JOIN payment_statuses ps ON ps.payment_status_id = p.payment_status_id " +
+                        "WHERE LOWER(ps.status_name) = 'completed'"
         );
         List<Object> params = new ArrayList<>();
-        appendDateRange(sql, params, "payment_date", from, to);
+        appendDateRange(sql, params, "p.payment_date", from, to);
         return queryDouble(sql.toString(), params);
     }
 
@@ -198,7 +241,10 @@ public class ReportDAOImpl implements ReportDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    rows.add(new ReportRowDTO("Payments - " + rs.getString("status_name"), String.valueOf(rs.getInt("cnt"))));
+                    rows.add(new ReportRowDTO(
+                            "Payments - " + rs.getString("status_name"),
+                            String.valueOf(rs.getInt("cnt"))
+                    ));
                 }
             }
 
