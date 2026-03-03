@@ -1,0 +1,180 @@
+/* Layout Reset */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+:root {
+  --font-family: Arial, sans-serif;
+  --font-family1: "Poppins", sans-serif;
+
+  --color-bg: #ffffff;
+  --color-text: #222;
+  --color-border: #ddd;
+
+  --color-primary: #2f80ed;
+  --color-primary-hover: #2466c2;
+
+  --color-button-bg: #f7f7f7;
+  --color-button-hover: #efefef;
+
+  --color-error: #d12b2b;
+  --color-slide-bg: #f0f0f0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main Grid */
+.homepg-grid-container {
+  display: grid;
+  grid-template-columns: 0.8fr 2fr;
+  height: 100vh;
+  font-family: var(--font-family);
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* Auth Panel (Left) */
+.homepg-auth-panel {
+  padding: 1.5rem;
+  background-color: var(--color-bg);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Main Title Container */
+.homepg-auth-title {
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 2rem;
+  color: #1f2d3d;
+  margin-bottom: 2.5rem;
+  line-height: 1.3;
+  letter-spacing: 0.8px;
+}
+
+/* "Welcome" */
+.homepg-auth-welcome {
+  display: block;
+  font-size: 4.3rem;
+  font-weight: 800;
+  margin-bottom: 0.6rem;
+
+  background: linear-gradient(90deg, #2f80ed, #56ccf2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  letter-spacing: -1px;
+}
+
+/* OceanView Resort */
+.homepg-auth-title::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #2f80ed, #56ccf2);
+  margin: 14px auto 0 auto;
+  border-radius: 3px;
+}
+
+/* Form Container */
+.homepg-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+/* Form Box */
+.homepg-form-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.homepg-form-heading {
+  margin-bottom: 0.4rem;
+  font-size: 1.6rem;
+  color: var(--color-text);
+  font-family: var(--font-family1);
+}
+
+/* Inputs */
+.homepg-form-box input {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+}
+
+.homepg-form-box input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+}
+
+/* Button */
+.homepg-form-box button {
+  width: 100%;
+  padding: 0.65rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.homepg-form-box button:hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* Messages */
+.homepg-message {
+  color: var(--color-error);
+  font-size: 0.9rem;
+  margin: 0 0 8px 0;
+}
+
+/* Slideshow (Right Panel) */
+.homepg-slideshow {
+  border-radius: 5px;
+  background-color: var(--color-slide-bg);
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  transition: background-image 0.7s ease-in-out;
+  overflow: hidden;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .homepg-grid-container {
+    grid-template-columns: 1fr;
+  }
+
+  .homepg-auth-panel {
+    box-shadow: none;
+    height: auto;
+    padding: 1.5rem;
+  }
+
+  .homepg-slideshow {
+    height: 300px;
+    margin-top: 20px;
+  }
+}

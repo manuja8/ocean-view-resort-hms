@@ -1,0 +1,5 @@
+<div class="footerbar">
+  &copy; 2026 Ocean View Resort. All rights reserved.
+</div>
+
+<%@ include file="/WEB-INF/views/layouts/faq-fab.jspf" %>

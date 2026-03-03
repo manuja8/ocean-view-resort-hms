@@ -1,0 +1,78 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div class="brand-title">
+      <b>Ocean View Resort</b>
+      <span>Hotel Management System</span>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Dashboard</div>
+    <nav class="nav">
+      <a href="${pageContext.request.contextPath}/dashboard">
+        <span class="dot staff"></span> Home
+      </a>
+    </nav>
+  </div>
+
+  <!-- ADMIN ONLY -->
+  <c:if test="${sessionScope.role == 'admin'}">
+    <div class="nav-section">
+      <div class="nav-label">Admin Operations</div>
+      <nav class="nav">
+        <a href="${pageContext.request.contextPath}/admin/users">
+          <span class="dot admin"></span> User Accounts
+        </a>
+        <a href="${pageContext.request.contextPath}/admin/rooms">
+          <span class="dot admin"></span> Rooms
+        </a>
+        <a href="${pageContext.request.contextPath}/admin/reports">
+          <span class="dot admin"></span> Reports
+        </a>
+        <a href="${pageContext.request.contextPath}/admin/faq">
+          <span class="dot admin"></span> FAQ
+        </a>
+      </nav>
+    </div>
+  </c:if>
+
+  <!-- STAFF (Admin + Receptionist) -->
+  <div class="nav-section">
+    <div class="nav-label">Reception / Staff</div>
+    <nav class="nav">
+      <a href="${pageContext.request.contextPath}/staff/rooms">
+        <span class="dot staff"></span> View Rooms
+      </a>
+      <a href="${pageContext.request.contextPath}/staff/guests">
+        <span class="dot staff"></span> Guests
+      </a>
+      <a href="${pageContext.request.contextPath}/staff/reservations">
+        <span class="dot staff"></span> Reservations
+      </a>
+      <a href="${pageContext.request.contextPath}/staff/billing">
+        <span class="dot staff"></span> Billing
+      </a>
+      <a href="${pageContext.request.contextPath}/staff/payments">
+        <span class="dot staff"></span> Payments
+      </a>
+      <a href="${pageContext.request.contextPath}/staff/complaints">
+        <span class="dot staff"></span> Complaints
+      </a>
+      <a href="${pageContext.request.contextPath}/staff/notifications">
+        <span class="dot staff"></span> Notifications
+      </a>
+    </nav>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label"></div>
+    <nav class="nav">
+      <a href="${pageContext.request.contextPath}/logout">
+        <span class="dot danger"></span> Logout
+      </a>
+    </nav>
+  </div>
+</aside>

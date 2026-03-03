@@ -1,0 +1,9 @@
+<div class="topbar">
+  <h1>${pageTitle}</h1>
+
+  <div class="userbox">
+    <span>Hi, <b>${sessionScope.username}</b></span>
+    <span class="role-chip">${sessionScope.role}</span>
+    <a class="logout" href="${pageContext.request.contextPath}/logout">Logout</a>
+  </div>
+</div>
