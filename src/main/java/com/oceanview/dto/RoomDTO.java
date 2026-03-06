@@ -1,12 +1,14 @@
 package com.oceanview.dto;
 
+import java.math.BigDecimal;
+
 public class RoomDTO {
-
     private int roomId;
-    private String roomType;
-    private double rate;
-    private String availabilityStatus;
-
+    private String roomNumber;
+    private int roomTypeId;
+    private String roomTypeName;
+    private BigDecimal price;
+    private String status;
 
     public int getRoomId() {
         return roomId;
@@ -16,27 +18,43 @@ public class RoomDTO {
         this.roomId = roomId;
     }
 
-    public String getRoomType() {
-        return roomType;
+    public String getRoomNumber() {
+        return roomNumber;
     }
 
-    public void setRoomType(String roomType) {
-        this.roomType = roomType;
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
     }
 
-    public double getRate() {
-        return rate;
+    public int getRoomTypeId() {
+        return roomTypeId;
     }
 
-    public void setRate(double rate) {
-        this.rate = rate;
+    public void setRoomTypeId(int roomTypeId) {
+        this.roomTypeId = roomTypeId;
     }
 
-    public String getAvailabilityStatus() {
-        return availabilityStatus;
+    public String getRoomTypeName() {
+        return roomTypeName;
     }
 
-    public void setAvailabilityStatus(String availabilityStatus) {
-        this.availabilityStatus = availabilityStatus;
+    public void setRoomTypeName(String roomTypeName) {
+        this.roomTypeName = roomTypeName;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

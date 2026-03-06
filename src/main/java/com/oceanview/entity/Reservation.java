@@ -5,14 +5,18 @@ import java.time.LocalDate;
 public class Reservation {
 
     private int reservationNo;
+    private String reservationNumber;
     private Guest guest;
     private Room room;
     private LocalDate checkIn;
     private LocalDate checkOut;
     private String status;
 
-    public Reservation() {
-    }
+    private int createdByUserId;
+    private Integer updatedByUserId;
+
+  
+    private double roomTypePrice;
 
     public int getReservationNo() {
         return reservationNo;
@@ -20,6 +24,14 @@ public class Reservation {
 
     public void setReservationNo(int reservationNo) {
         this.reservationNo = reservationNo;
+    }
+
+    public String getReservationNumber() {
+        return reservationNumber;
+    }
+
+    public void setReservationNumber(String reservationNumber) {
+        this.reservationNumber = reservationNumber;
     }
 
     public Guest getGuest() {
@@ -60,5 +72,29 @@ public class Reservation {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getCreatedByUserId() {
+        return createdByUserId;
+    }
+
+    public void setCreatedByUserId(int createdByUserId) {
+        this.createdByUserId = createdByUserId;
+    }
+
+    public Integer getUpdatedByUserId() {
+        return updatedByUserId;
+    }
+
+    public void setUpdatedByUserId(Integer updatedByUserId) {
+        this.updatedByUserId = updatedByUserId;
+    }
+
+    public double getRoomTypePrice() {
+        return roomTypePrice;
+    }
+
+    public void setRoomTypePrice(double roomTypePrice) {
+        this.roomTypePrice = roomTypePrice;
     }
 }

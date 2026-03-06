@@ -5,14 +5,13 @@ import com.oceanview.dto.GuestDTO;
 import java.util.List;
 
 public interface GuestService {
+    int addGuest(GuestDTO dto, int createdByUserId);
 
-    int addGuest(GuestDTO guestDTO);
+    boolean updateGuest(GuestDTO dto, int updatedByUserId);
 
     GuestDTO getGuestById(int guestId);
 
-    List<GuestDTO> getAllGuests();
+    List<GuestDTO> getAllGuests(String q);
 
-    boolean updateGuest(GuestDTO guestDTO);
-
-    boolean deleteGuest(int guestId);
+    boolean deleteGuest(int guestId); // admin-only
 }

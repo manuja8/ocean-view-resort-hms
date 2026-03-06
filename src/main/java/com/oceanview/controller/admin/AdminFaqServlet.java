@@ -20,7 +20,7 @@ public class AdminFaqServlet extends HttpServlet {
         String mode = req.getParameter("mode");
         if (mode == null || mode.isBlank()) mode = "list";
 
-        // flash messages (PRG)
+        //  messages
         HttpSession session = req.getSession(false);
         if (session != null) {
             Object success = session.getAttribute("flashSuccess");

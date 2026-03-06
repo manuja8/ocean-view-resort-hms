@@ -106,7 +106,12 @@ public class StaffBillingServlet extends HttpServlet {
 
             billingService.generateBill(reservationId, discount, taxPercent, userId, force);
 
-            req.getSession().setAttribute("flashSuccess", "Bill calculated successfully.");
+            if (force) {
+                req.getSession().setAttribute("flashSuccess", "Previous bill cancelled and new bill generated successfully.");
+            } else {
+                req.getSession().setAttribute("flashSuccess", "Bill calculated successfully.");
+            }
+
             resp.sendRedirect(req.getContextPath() + "/staff/billing?mode=view&reservationId=" + reservationId);
 
         } catch (Exception ex) {

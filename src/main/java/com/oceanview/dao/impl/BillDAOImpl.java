@@ -9,85 +9,122 @@ import java.sql.*;
 
 public class BillDAOImpl implements BillDAO {
 
-    private Connection con = DBConnection.getInstance().getConnection();
-
     @Override
     public int save(Bill bill) {
-        try {
-            String sql = "INSERT INTO bills (reservation_no, total_amount, itemized_charges) VALUES (?, ?, ?)";
-            PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        String sql =
+                "INSERT INTO bills (reservation_id, total_amount, discount, tax, num_nights, created_by_user_id) " +
+                        "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection con = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setInt(1, bill.getReservation().getReservationNo());
             ps.setDouble(2, bill.getTotalAmount());
-            ps.setString(3, bill.getItemizedCharges());
+            ps.setDouble(3, bill.getDiscount());
+            ps.setDouble(4, bill.getTax());
+            ps.setInt(5, bill.getNumNights());
+            ps.setInt(6, bill.getCreatedByUserId());
 
             ps.executeUpdate();
 
-            ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next()) return rs.getInt(1);
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Saving bill failed", e);
         }
-        return 0;
     }
 
     @Override
     public Bill findByReservation(int reservationNo) {
-        try {
-            String sql = "SELECT * FROM bills WHERE reservation_no=?";
-            PreparedStatement ps = con.prepareStatement(sql);
+
+        // return latest active bill for reservation
+        String sql =
+                "SELECT bill_id, reservation_id, total_amount, discount, tax, num_nights, bill_date, is_canceled " +
+                        "FROM bills WHERE reservation_id = ? AND is_canceled = 0 ORDER BY bill_id DESC LIMIT 1";
+
+        try (Connection con = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setInt(1, reservationNo);
 
-            ResultSet rs = ps.executeQuery();
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) return null;
 
-            if (rs.next()) {
-                Bill bill = new Bill();
-                bill.setBillNo(rs.getInt("bill_no"));
-                bill.setTotalAmount(rs.getDouble("total_amount"));
-                bill.setItemizedCharges(rs.getString("itemized_charges"));
+                Bill b = new Bill();
+                b.setBillNo(rs.getInt("bill_id"));
+                b.setTotalAmount(rs.getDouble("total_amount"));
+                b.setDiscount(rs.getDouble("discount"));
+                b.setTax(rs.getDouble("tax"));
+                b.setNumNights(rs.getInt("num_nights"));
+                b.setBillDate(rs.getTimestamp("bill_date").toLocalDateTime());
+                b.setCanceled(rs.getBoolean("is_canceled"));
 
-                Reservation reservation = new Reservation();
-                reservation.setReservationNo(reservationNo);
-                bill.setReservation(reservation);
+                Reservation r = new Reservation();
+                r.setReservationNo(rs.getInt("reservation_id"));
+                b.setReservation(r);
 
-                return bill;
+                return b;
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Find bill by reservation failed", e);
         }
-
-        return null;
     }
 
     @Override
     public Bill findById(int billId) {
-        try {
-            String sql = "SELECT * FROM bills WHERE bill_no=?";
-            PreparedStatement ps = con.prepareStatement(sql);
+
+        String sql =
+                "SELECT bill_id, reservation_id, total_amount, discount, tax, num_nights, bill_date, is_canceled " +
+                        "FROM bills WHERE bill_id = ?";
+
+        try (Connection con = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
             ps.setInt(1, billId);
 
-            ResultSet rs = ps.executeQuery();
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) return null;
 
-            if (rs.next()) {
-                Bill bill = new Bill();
-                bill.setBillNo(rs.getInt("bill_no"));
-                bill.setTotalAmount(rs.getDouble("total_amount"));
-                bill.setItemizedCharges(rs.getString("itemized_charges"));
+                Bill b = new Bill();
+                b.setBillNo(rs.getInt("bill_id"));
+                b.setTotalAmount(rs.getDouble("total_amount"));
+                b.setDiscount(rs.getDouble("discount"));
+                b.setTax(rs.getDouble("tax"));
+                b.setNumNights(rs.getInt("num_nights"));
+                b.setBillDate(rs.getTimestamp("bill_date").toLocalDateTime());
+                b.setCanceled(rs.getBoolean("is_canceled"));
 
-                // Optionally set reservation info if needed
-                Reservation reservation = new Reservation();
-                reservation.setReservationNo(rs.getInt("reservation_no"));
-                bill.setReservation(reservation);
+                Reservation r = new Reservation();
+                r.setReservationNo(rs.getInt("reservation_id"));
+                b.setReservation(r);
 
-                return bill;
+                return b;
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Find bill by id failed", e);
         }
+    }
 
-        return null;
+    @Override
+    public void cancel(int billId, int updatedByUserId) {
+
+        String sql =
+                "UPDATE bills SET is_canceled = 1, updated_by_user_id = ?, updated_at = NOW() WHERE bill_id = ?";
+
+        try (Connection con = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, updatedByUserId);
+            ps.setInt(2, billId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Cancel bill failed", e);
+        }
     }
 }

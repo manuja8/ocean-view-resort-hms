@@ -22,7 +22,7 @@
       <div class="pagebar">
         <div>
           <h2>Reports</h2>
-          <div class="subtitle">Admin-only: generate operational and financial reports.</div>
+          <div class="subtitle"></div>
         </div>
       </div>
 

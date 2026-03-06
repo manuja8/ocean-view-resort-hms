@@ -15,7 +15,7 @@ public class NotificationCenter {
     private final Subject<ComplaintEvent> complaintSubject = new Subject<>();
     private final Subject<PaymentEvent> paymentSubject = new Subject<>();
 
-    // In-memory store (good for assignment demo; resets on server restart)
+   
     private final LinkedList<NotificationMessage> store = new LinkedList<>();
     private static final int MAX = 50;
 

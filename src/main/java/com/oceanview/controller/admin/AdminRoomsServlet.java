@@ -106,7 +106,7 @@ public class AdminRoomsServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/admin/rooms");
 
         } catch (Exception ex) {
-            // show form again with error + dropdown
+
             req.setAttribute("error", ex.getMessage());
             req.setAttribute("roomTypes", roomService.getRoomTypes());
             req.setAttribute("room", buildRoomFromRequest(req));

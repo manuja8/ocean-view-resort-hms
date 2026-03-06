@@ -27,7 +27,7 @@
               <c:otherwise>Add FAQ</c:otherwise>
             </c:choose>
           </h2>
-          <div class="subtitle">Admin-only FAQ management.</div>
+          <div class="subtitle"></div>
         </div>
 
         <div class="toolbar">

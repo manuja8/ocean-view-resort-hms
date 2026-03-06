@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
 
         user.setUpdatedByUserId(adminUserId);
 
-        // if password empty -> keep old (DAO already supports null => keep old)
+
         if (plainPasswordOrNull != null && !plainPasswordOrNull.trim().isEmpty()) {
             user.setPasswordHash(BCrypt.hashpw(plainPasswordOrNull.trim(), BCrypt.gensalt()));
         } else {
@@ -77,15 +77,15 @@ public class UserServiceImpl implements UserService {
         if (user.getContactNo() == null || user.getContactNo().trim().isEmpty())
             throw new IllegalArgumentException("Contact number is required.");
 
-        // Role validation (roleId must exist)
+
         UserRoleDTO role = roleDAO.findById(user.getRoleId());
         if (role == null) throw new IllegalArgumentException("Invalid role.");
 
-        // Ensure correct subclass based on role name (Factory responsibility)
+
         User typed = UserFactory.createUser(role.getRoleName());
         if (typed == null) throw new IllegalArgumentException("Invalid role.");
 
-        // copy core fields into typed instance
+
         typed.setUserId(user.getUserId());
         typed.setUsername(user.getUsername().trim());
         typed.setFullName(user.getFullName().trim());
@@ -98,14 +98,13 @@ public class UserServiceImpl implements UserService {
         typed.setActive(user.isActive());
         typed.setBlocked(user.isBlocked());
 
-        // expiry default
+        // expiry
         if (user.getExpiryDate() == null) {
             typed.setExpiryDate(LocalDateTime.now().plusYears(1));
         } else {
             typed.setExpiryDate(user.getExpiryDate());
         }
 
-        // Important: replace the passed object state (so servlet can keep using it)
         user.setUsername(typed.getUsername());
         user.setFullName(typed.getFullName());
         user.setAddress(typed.getAddress());

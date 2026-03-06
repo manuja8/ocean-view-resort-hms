@@ -17,7 +17,7 @@
       <div class="pagebar">
         <div>
           <h2>Reservations</h2>
-          <div class="subtitle">Create / Update / Search / Cancel reservations.</div>
+          <div class="subtitle"></div>
         </div>
 
         <div class="toolbar">
@@ -56,6 +56,7 @@
         <table class="table">
           <thead>
           <tr>
+          <th>Reservation ID</th>
             <th>Res No</th>
             <th>Guest</th>
             <th>Room</th>
@@ -69,6 +70,7 @@
 
           <c:forEach var="r" items="${reservationList}">
             <tr>
+            <td>${r.reservationNo}</td>
               <td style="font-weight:900; color:#0f172a;">${r.reservationNumber}</td>
               <td>${r.guest.fullName}</td>
               <td>${r.room.roomNumber}</td>

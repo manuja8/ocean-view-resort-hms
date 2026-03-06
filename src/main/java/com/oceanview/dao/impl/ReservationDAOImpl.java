@@ -227,4 +227,20 @@ public class ReservationDAOImpl implements ReservationDAO {
         if (s.isEmpty()) return "booked";
         return s;
     }
+
+    @Override
+    public void updateRoomStatus(int roomId, String status, int updatedByUserId) {
+        String sql = "UPDATE rooms SET status = ?, updated_by_user_id = ?, updated_at = NOW() WHERE room_id = ?";
+        try (Connection con = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, status);
+            ps.setInt(2, updatedByUserId);
+            ps.setInt(3, roomId);
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Updating room status failed", e);
+        }
+    }
 }

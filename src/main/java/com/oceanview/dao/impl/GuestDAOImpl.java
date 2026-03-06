@@ -87,7 +87,7 @@ public class GuestDAOImpl implements GuestDAO {
             return ps.executeUpdate() == 1;
 
         } catch (SQLException e) {
-            // likely FK restrict due to reservations
+
             throw new RuntimeException("Cannot delete guest (guest may have reservations).", e);
         }
     }

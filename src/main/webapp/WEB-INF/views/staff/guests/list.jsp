@@ -17,7 +17,7 @@
       <div class="pagebar">
         <div>
           <h2>Guests</h2>
-          <div class="subtitle">Add / Update / Search guests (Reception/Admin).</div>
+          <div class="subtitle"></div>
         </div>
 
         <div class="toolbar">

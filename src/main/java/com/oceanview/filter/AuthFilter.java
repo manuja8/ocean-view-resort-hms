@@ -5,59 +5,27 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.*;
 import java.io.IOException;
 
-
-@WebFilter({"/dashboard/*"})
+@WebFilter({"/dashboard", "/admin/*", "/staff/*"})
 public class AuthFilter implements Filter {
 
-    public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain chain)
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
         HttpSession session = req.getSession(false);
-
         if (session == null || session.getAttribute("loggedUser") == null) {
-            res.sendRedirect(req.getContextPath() + "/auth/login.jsp");
+            res.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
-        // RBAC Protection
-        String role = (String) session.getAttribute("role");
-        String uri = req.getRequestURI();
-
-        // protect admin area
-        if (uri.contains("/dashboard/admin/") && !"ADMIN".equalsIgnoreCase(role)) {
-            res.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
+        // Prevent cached protected pages
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.setHeader("Pragma", "no-cache");
+        res.setDateHeader("Expires", 0);
 
         chain.doFilter(request, response);
     }
 }
-
-/*
-@WebFilter({"/dashboard/*"})  // <- protects all files inside dashboard folder
-public class AuthFilter implements Filter {
-
-    public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain chain)
-            throws IOException, ServletException {
-
-        HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse res = (HttpServletResponse) response;
-
-        HttpSession session = req.getSession(false);
-
-        if (session == null || session.getAttribute("loggedUser") == null) {
-            res.sendRedirect(req.getContextPath() + "/auth/login.jsp"); // safer redirect
-            return;
-        }
-
-        chain.doFilter(request, response);
-    }
-}
-*/

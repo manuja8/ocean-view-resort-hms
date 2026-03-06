@@ -15,6 +15,8 @@ public interface ReservationDAO {
 
     Reservation findById(int id);
 
+    void updateRoomStatus(int roomId, String status, int updatedByUserId);
+
     List<Reservation> search(String q, String status);
 
     boolean hasOverlap(int roomId, LocalDate checkIn, LocalDate checkOut, Integer excludeReservationId);

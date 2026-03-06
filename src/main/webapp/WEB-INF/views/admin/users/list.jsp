@@ -32,7 +32,7 @@
       <div class="pagebar">
         <div>
           <h2>User Accounts</h2>
-          <div class="subtitle">Admin-only: view, search, create, update, delete accounts.</div>
+          <div class="subtitle"></div>
         </div>
 
        <div class="toolbar">

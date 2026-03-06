@@ -22,7 +22,8 @@
       </div>
 
       <c:if test="${not empty success}"><div class="alert success">${success}</div></c:if>
-      <c:if test="${not empty error}"><div class="alert error">${error}</div></c:if>
+       <c:if test="${not empty error}"><div class="alert error">${error}</div></c:if>
+
 
       <div class="panel form-panel">
         <form action="${pageContext.request.contextPath}/staff/billing" method="post">

@@ -2,9 +2,7 @@
   const el = document.getElementById("slideshow");
   if (!el) return;
 
-  // Replace these with your resort image URLs or local assets paths
-  // If using local images, put them in: /assets/img/ and reference like:
-  // `${contextPath}/assets/img/slide1.jpg`
+
   const contextPath = document.body.getAttribute("data-context") || "";
   const images = [
     contextPath + "/assets/img/slide1.jpg",

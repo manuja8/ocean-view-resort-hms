@@ -20,7 +20,7 @@
       <div class="pagebar">
         <div>
           <h2>Rooms</h2>
-          <div class="subtitle">View and search rooms (Reception/Admin).</div>
+          <div class="subtitle">View and search rooms</div>
         </div>
 
         <div class="toolbar">

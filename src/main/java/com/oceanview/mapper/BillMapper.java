@@ -11,21 +11,16 @@ public class BillMapper {
         BillDTO dto = new BillDTO();
         dto.setBillNo(bill.getBillNo());
         dto.setReservation(ReservationMapper.toDTO(bill.getReservation()));
+
         dto.setTotalAmount(bill.getTotalAmount());
+        dto.setDiscount(bill.getDiscount());
+        dto.setTax(bill.getTax());
+        dto.setNumNights(bill.getNumNights());
+        dto.setCanceled(bill.isCanceled());
+
+        if (bill.getBillDate() != null) dto.setBillDate(bill.getBillDate().toString());
         dto.setItemizedCharges(bill.getItemizedCharges());
 
         return dto;
-    }
-
-    public static Bill toEntity(BillDTO dto) {
-        if (dto == null) return null;
-
-        Bill bill = new Bill();
-        bill.setBillNo(dto.getBillNo());
-        bill.setReservation(ReservationMapper.toEntity(dto.getReservation()));
-        bill.setTotalAmount(dto.getTotalAmount());
-        bill.setItemizedCharges(dto.getItemizedCharges());
-
-        return bill;
     }
 }

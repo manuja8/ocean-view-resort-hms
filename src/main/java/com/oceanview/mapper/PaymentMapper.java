@@ -10,12 +10,16 @@ public class PaymentMapper {
 
         PaymentDTO dto = new PaymentDTO();
         dto.setPaymentId(payment.getPaymentId());
-        dto.setBill(BillMapper.toDTO(payment.getBill()));
+        dto.setBillId(payment.getBillId());
         dto.setAmount(payment.getAmount());
         dto.setPaymentMethodId(payment.getPaymentMethodId());
         dto.setPaymentStatusId(payment.getPaymentStatusId());
         dto.setPaymentReference(payment.getPaymentReference());
-        dto.setPaymentDate(payment.getPaymentDate());
+
+
+        if (payment.getPaymentDate() != null) {
+            dto.setPaymentDate(payment.getPaymentDate().toString());
+        }
 
         return dto;
     }
@@ -25,12 +29,12 @@ public class PaymentMapper {
 
         Payment payment = new Payment();
         payment.setPaymentId(dto.getPaymentId());
-        payment.setBill(BillMapper.toEntity(dto.getBill()));
+        payment.setBillId(dto.getBillId());
         payment.setAmount(dto.getAmount());
         payment.setPaymentMethodId(dto.getPaymentMethodId());
         payment.setPaymentStatusId(dto.getPaymentStatusId());
         payment.setPaymentReference(dto.getPaymentReference());
-        payment.setPaymentDate(dto.getPaymentDate());
+
 
         return payment;
     }

@@ -123,7 +123,7 @@ public class RoomDAOImpl implements RoomDAO {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("Create room failed (maybe duplicate room number?)", e);
+            throw new RuntimeException("Create room failed (duplicate room)", e);
         }
     }
 

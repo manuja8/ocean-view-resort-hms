@@ -12,7 +12,7 @@ public class BillDTO {
     private String billDate;
     private boolean canceled;
 
-    // display only
+
     private String itemizedCharges;
 
     public int getBillNo() {

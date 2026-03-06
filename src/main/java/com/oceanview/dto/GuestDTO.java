@@ -4,7 +4,7 @@ public class GuestDTO {
     private int guestId;
     private String fullName;
     private String gender;
-    private String dateOfBirth; // yyyy-MM-dd (for HTML date input)
+    private String dateOfBirth; // yyyy-MM-dd
     private String address;
     private String contactNo;
     private String email;

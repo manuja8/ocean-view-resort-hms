@@ -1,4 +1,3 @@
-
 package com.oceanview.service.impl;
 
 import com.oceanview.dao.UserDAO;
@@ -9,6 +8,8 @@ import com.oceanview.mapper.UserMapper;
 import com.oceanview.service.AuthService;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.time.LocalDateTime;
+
 public class AuthServiceImpl implements AuthService {
 
     private UserDAO userDAO = new UserDAOImpl();
@@ -18,9 +19,16 @@ public class AuthServiceImpl implements AuthService {
         User user = userDAO.login(username);
         if (user == null || !user.isActive() || user.isBlocked()) return null;
 
+        LocalDateTime now = LocalDateTime.now();
+
+        if (user.getEffectiveDate() != null && user.getEffectiveDate().isAfter(now)) return null;
+        if (user.getExpiryDate() != null && !user.getExpiryDate().isAfter(now)) return null;
+
         boolean match = BCrypt.checkpw(password, user.getPasswordHash());
         if (!match) return null;
 
-        return UserMapper.toDTO(user);  // convert entity to DTO
+        userDAO.updateLastLogin(user.getUserId());
+
+        return UserMapper.toDTO(user);
     }
 }

@@ -21,13 +21,16 @@
       <div class="pagebar">
         <div>
           <h2>FAQ Management</h2>
-          <div class="subtitle">Admin-only: add, update, delete FAQs.</div>
+          <div class="subtitle"></div>
         </div>
 
         <div class="toolbar">
           <a class="btn primary" href="${pageContext.request.contextPath}/admin/faq?mode=create">Add FAQ</a>
         </div>
       </div>
+
+      <c:if test="${not empty success}"><div class="alert success">${success}</div></c:if>
+            <c:if test="${not empty error}"><div class="alert error">${error}</div></c:if>
 
       <div class="panel">
         <table class="table">

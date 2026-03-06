@@ -1,21 +1,10 @@
 package com.oceanview.entity;
 
 public class Room {
-
     private int roomId;
-    private String roomType;
-    private double rate;
-    private String availabilityStatus;
-
-    public Room() {
-    }
-
-    public Room(int roomId, String roomType, double rate, String availabilityStatus) {
-        this.roomId = roomId;
-        this.roomType = roomType;
-        this.rate = rate;
-        this.availabilityStatus = availabilityStatus;
-    }
+    private String roomNumber;
+    private int roomTypeId;
+    private String status; // available/occupied/maintenance
 
     public int getRoomId() {
         return roomId;
@@ -25,27 +14,27 @@ public class Room {
         this.roomId = roomId;
     }
 
-    public String getRoomType() {
-        return roomType;
+    public String getRoomNumber() {
+        return roomNumber;
     }
 
-    public void setRoomType(String roomType) {
-        this.roomType = roomType;
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
     }
 
-    public double getRate() {
-        return rate;
+    public int getRoomTypeId() {
+        return roomTypeId;
     }
 
-    public void setRate(double rate) {
-        this.rate = rate;
+    public void setRoomTypeId(int roomTypeId) {
+        this.roomTypeId = roomTypeId;
     }
 
-    public String getAvailabilityStatus() {
-        return availabilityStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setAvailabilityStatus(String availabilityStatus) {
-        this.availabilityStatus = availabilityStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -5,31 +5,31 @@ import com.oceanview.entity.Reservation;
 
 public class ReservationMapper {
 
-    public static ReservationDTO toDTO(Reservation reservation) {
-        if (reservation == null) return null;
+    public static ReservationDTO toDTO(Reservation r) {
+        if (r == null) return null;
 
         ReservationDTO dto = new ReservationDTO();
-        dto.setReservationNo(reservation.getReservationNo());
-        dto.setGuest(GuestMapper.toDTO(reservation.getGuest()));
-        dto.setRoom(RoomMapper.toDTO(reservation.getRoom()));
-        dto.setCheckIn(reservation.getCheckIn());
-        dto.setCheckOut(reservation.getCheckOut());
-        dto.setStatus(reservation.getStatus());
-
+        dto.setReservationNo(r.getReservationNo());
+        dto.setReservationNumber(r.getReservationNumber());
+        dto.setGuest(GuestMapper.toDTO(r.getGuest()));
+        dto.setRoom(RoomMapper.toDTO(r.getRoom()));
+        dto.setCheckIn(r.getCheckIn());
+        dto.setCheckOut(r.getCheckOut());
+        dto.setStatus(r.getStatus());
         return dto;
     }
 
     public static Reservation toEntity(ReservationDTO dto) {
         if (dto == null) return null;
 
-        Reservation reservation = new Reservation();
-        reservation.setReservationNo(dto.getReservationNo());
-        reservation.setGuest(GuestMapper.toEntity(dto.getGuest()));
-        reservation.setRoom(RoomMapper.toEntity(dto.getRoom()));
-        reservation.setCheckIn(dto.getCheckIn());
-        reservation.setCheckOut(dto.getCheckOut());
-        reservation.setStatus(dto.getStatus());
-
-        return reservation;
+        Reservation r = new Reservation();
+        r.setReservationNo(dto.getReservationNo());
+        r.setReservationNumber(dto.getReservationNumber());
+        r.setGuest(GuestMapper.toEntity(dto.getGuest()));
+        r.setRoom(RoomMapper.toEntity(dto.getRoom()));
+        r.setCheckIn(dto.getCheckIn());
+        r.setCheckOut(dto.getCheckOut());
+        r.setStatus(dto.getStatus());
+        return r;
     }
 }

@@ -12,7 +12,7 @@ public class PaymentDTO {
     private String paymentStatusName;
 
     private String paymentReference;
-    private String paymentDate; // for display
+    private String paymentDate;
 
     public int getPaymentId() {
         return paymentId;

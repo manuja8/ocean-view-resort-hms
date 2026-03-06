@@ -16,4 +16,5 @@ public interface FaqDAO {
     boolean update(Faq faq, int updatedByUserId);
 
     boolean delete(int id);
+    
 }

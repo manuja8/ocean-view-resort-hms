@@ -3,14 +3,17 @@ package com.oceanview.entity;
 import java.time.LocalDateTime;
 
 public class Payment {
-
     private int paymentId;
-    private Bill bill;
+    private int billId;
     private double amount;
+
     private int paymentMethodId;
     private int paymentStatusId;
+
     private String paymentReference;
     private LocalDateTime paymentDate;
+
+    private int createdByUserId;
 
     public int getPaymentId() {
         return paymentId;
@@ -20,12 +23,12 @@ public class Payment {
         this.paymentId = paymentId;
     }
 
-    public Bill getBill() {
-        return bill;
+    public int getBillId() {
+        return billId;
     }
 
-    public void setBill(Bill bill) {
-        this.bill = bill;
+    public void setBillId(int billId) {
+        this.billId = billId;
     }
 
     public double getAmount() {
@@ -66,5 +69,13 @@ public class Payment {
 
     public void setPaymentDate(LocalDateTime paymentDate) {
         this.paymentDate = paymentDate;
+    }
+
+    public int getCreatedByUserId() {
+        return createdByUserId;
+    }
+
+    public void setCreatedByUserId(int createdByUserId) {
+        this.createdByUserId = createdByUserId;
     }
 }

@@ -7,17 +7,14 @@ import com.oceanview.entity.User;
 public class UserFactory {
 
     public static User createUser(String role) {
-
         if (role == null) return null;
 
-        switch (role.toLowerCase()) {
+        String r = role.trim().toLowerCase();
+        switch (r) {
             case "admin":
                 return new Admin();
-
             case "receptionist":
-            case "user":
                 return new Receptionist();
-
             default:
                 return null;
         }

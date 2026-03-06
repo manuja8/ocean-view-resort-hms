@@ -15,7 +15,7 @@ public class ReportDAOImpl implements ReportDAO {
         return (from == null) ? null : Timestamp.valueOf(from.atStartOfDay());
     }
 
-    // end is exclusive (to + 1 day at 00:00)
+
     private Timestamp endTs(LocalDate to) {
         return (to == null) ? null : Timestamp.valueOf(to.plusDays(1).atStartOfDay());
     }
@@ -54,7 +54,7 @@ public class ReportDAOImpl implements ReportDAO {
         }
     }
 
-    // common date filter builder for DATETIME columns
+
     private void appendDateRange(StringBuilder sql, List<Object> params, String column, LocalDate from, LocalDate to) {
         Timestamp s = startTs(from);
         Timestamp e = endTs(to);
@@ -68,7 +68,6 @@ public class ReportDAOImpl implements ReportDAO {
         }
     }
 
-    // ------------------- OCCUPANCY -------------------
 
     @Override
     public int countRooms() {
@@ -91,7 +90,7 @@ public class ReportDAOImpl implements ReportDAO {
         );
         List<Object> params = new ArrayList<>();
 
-        // Use COALESCE(check_in_date, created_at) so even booked reservations with null check_in_date are counted.
+
         appendDateRange(sql, params, "COALESCE(check_in_date, created_at)", from, to);
 
         return queryInt(sql.toString(), params);
@@ -110,7 +109,6 @@ public class ReportDAOImpl implements ReportDAO {
         return queryInt(sql.toString(), params);
     }
 
-    // ------------------- BILLS / REVENUE -------------------
 
     @Override
     public int countBills(LocalDate from, LocalDate to) {
@@ -122,9 +120,7 @@ public class ReportDAOImpl implements ReportDAO {
         return queryInt(sql.toString(), params);
     }
 
-    /**
-     * "Paid Bill" = bill has at least one COMPLETED payment.
-     */
+
     @Override
     public int countPaidBills(LocalDate from, LocalDate to) {
         StringBuilder sql = new StringBuilder(
@@ -144,9 +140,7 @@ public class ReportDAOImpl implements ReportDAO {
         return queryInt(sql.toString(), params);
     }
 
-    /**
-     * "Unpaid Bill" = bill has NO completed payments (pending/failed payments still count as unpaid).
-     */
+
     @Override
     public int countUnpaidBills(LocalDate from, LocalDate to) {
         StringBuilder sql = new StringBuilder(
@@ -166,9 +160,7 @@ public class ReportDAOImpl implements ReportDAO {
         return queryInt(sql.toString(), params);
     }
 
-    /**
-     * Paid revenue = SUM(total_amount) of bills that have at least one COMPLETED payment.
-     */
+
     @Override
     public double sumPaidRevenue(LocalDate from, LocalDate to) {
         StringBuilder sql = new StringBuilder(
@@ -188,11 +180,7 @@ public class ReportDAOImpl implements ReportDAO {
         return queryDouble(sql.toString(), params);
     }
 
-    // ------------------- PAYMENTS -------------------
 
-    /**
-     * Total payment records in range (all statuses).
-     */
     @Override
     public int countPayments(LocalDate from, LocalDate to) {
         StringBuilder sql = new StringBuilder(
@@ -203,9 +191,7 @@ public class ReportDAOImpl implements ReportDAO {
         return queryInt(sql.toString(), params);
     }
 
-    /**
-     * Total amount received = SUM of COMPLETED payments only.
-     */
+  
     @Override
     public double sumPayments(LocalDate from, LocalDate to) {
         StringBuilder sql = new StringBuilder(

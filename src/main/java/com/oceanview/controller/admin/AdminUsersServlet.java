@@ -47,7 +47,7 @@ public class AdminUsersServlet extends HttpServlet {
         if ("create".equalsIgnoreCase(mode)) {
             req.setAttribute("roles", roleDAO.findAll());
 
-            // empty user for form binding (default receptionist object)
+            // empty user for form binding
             User u = UserFactory.createUser("receptionist");
             if (u != null) {
                 u.setActive(true);
@@ -74,7 +74,7 @@ public class AdminUsersServlet extends HttpServlet {
             req.setAttribute("roles", roleDAO.findAll());
             req.setAttribute("user", u);
 
-            // format expiry for datetime-local
+            // format expiry for datetime
             if (u.getExpiryDate() != null) {
                 req.setAttribute("expiryDateValue", u.getExpiryDate().format(DT_LOCAL));
             }
@@ -131,7 +131,7 @@ public class AdminUsersServlet extends HttpServlet {
             u.setActive("1".equals(req.getParameter("isActive")) || "true".equalsIgnoreCase(req.getParameter("isActive")));
             u.setBlocked("1".equals(req.getParameter("isBlocked")) || "true".equalsIgnoreCase(req.getParameter("isBlocked")));
 
-            
+
             String expiryStr = req.getParameter("expiryDate");
             if (expiryStr == null || expiryStr.trim().isEmpty()) {
                 u.setExpiryDate(LocalDateTime.now().plusYears(1));

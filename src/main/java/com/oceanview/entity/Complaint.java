@@ -1,14 +1,24 @@
 package com.oceanview.entity;
 
-public class Complaint {
+import java.time.LocalDateTime;
 
+public class Complaint {
     private int complaintId;
-    private Guest guest;
-    private Reservation reservation;
+
+    private int guestId;
+    private Integer reservationId;
+
     private String subject;
     private String description;
-    private String status;
-    private String priority;
+
+    private String status;   // open, in_progress, resolved, closed
+    private String priority; // low, medium, high
+
+    private int createdByUserId;
+    private Integer updatedByUserId;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public int getComplaintId() {
         return complaintId;
@@ -18,20 +28,20 @@ public class Complaint {
         this.complaintId = complaintId;
     }
 
-    public Guest getGuest() {
-        return guest;
+    public int getGuestId() {
+        return guestId;
     }
 
-    public void setGuest(Guest guest) {
-        this.guest = guest;
+    public void setGuestId(int guestId) {
+        this.guestId = guestId;
     }
 
-    public Reservation getReservation() {
-        return reservation;
+    public Integer getReservationId() {
+        return reservationId;
     }
 
-    public void setReservation(Reservation reservation) {
-        this.reservation = reservation;
+    public void setReservationId(Integer reservationId) {
+        this.reservationId = reservationId;
     }
 
     public String getSubject() {
@@ -64,5 +74,37 @@ public class Complaint {
 
     public void setPriority(String priority) {
         this.priority = priority;
+    }
+
+    public int getCreatedByUserId() {
+        return createdByUserId;
+    }
+
+    public void setCreatedByUserId(int createdByUserId) {
+        this.createdByUserId = createdByUserId;
+    }
+
+    public Integer getUpdatedByUserId() {
+        return updatedByUserId;
+    }
+
+    public void setUpdatedByUserId(Integer updatedByUserId) {
+        this.updatedByUserId = updatedByUserId;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

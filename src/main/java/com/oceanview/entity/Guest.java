@@ -1,22 +1,17 @@
 package com.oceanview.entity;
 
+import java.time.LocalDate;
+
 public class Guest {
-
     private int guestId;
-    private String name;
+    private String fullName;
+    private String gender;
+    private LocalDate dateOfBirth; // nullable
     private String address;
-    private String contactNumber;
+    private String contactNo;
     private String email;
-
-    public Guest() {}
-
-    public Guest(int guestId, String name, String address, String contactNumber, String email) {
-        this.guestId = guestId;
-        this.name = name;
-        this.address = address;
-        this.contactNumber = contactNumber;
-        this.email = email;
-    }
+    private String identificationNo;
+    private String identificationType; // NIC/Passport/Driver License
 
     public int getGuestId() {
         return guestId;
@@ -26,12 +21,28 @@ public class Guest {
         this.guestId = guestId;
     }
 
-    public String getName() {
-        return name;
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getAddress() {
@@ -42,12 +53,12 @@ public class Guest {
         this.address = address;
     }
 
-    public String getContactNumber() {
-        return contactNumber;
+    public String getContactNo() {
+        return contactNo;
     }
 
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
+    public void setContactNo(String contactNo) {
+        this.contactNo = contactNo;
     }
 
     public String getEmail() {
@@ -58,4 +69,19 @@ public class Guest {
         this.email = email;
     }
 
+    public String getIdentificationNo() {
+        return identificationNo;
+    }
+
+    public void setIdentificationNo(String identificationNo) {
+        this.identificationNo = identificationNo;
+    }
+
+    public String getIdentificationType() {
+        return identificationType;
+    }
+
+    public void setIdentificationType(String identificationType) {
+        this.identificationType = identificationType;
+    }
 }

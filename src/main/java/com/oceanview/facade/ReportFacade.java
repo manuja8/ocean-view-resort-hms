@@ -15,12 +15,12 @@ public class ReportFacade {
 
     private final ReportDAO reportDAO;
 
-    // Default constructor for production (keeps your servlet unchanged)
+
     public ReportFacade() {
         this(new ReportDAOImpl());
     }
 
-    // Injectable constructor for testing / future extension (standard practice)
+ 
     public ReportFacade(ReportDAO reportDAO) {
         this.reportDAO = reportDAO;
     }

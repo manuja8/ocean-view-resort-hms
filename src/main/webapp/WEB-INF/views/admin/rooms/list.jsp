@@ -22,7 +22,7 @@
       <div class="pagebar">
         <div>
           <h2>Rooms Management</h2>
-          <div class="subtitle">Admin-only: add, update, delete rooms.</div>
+          <div class="subtitle"></div>
         </div>
 
        <div class="toolbar">

@@ -6,39 +6,41 @@ import java.sql.SQLException;
 
 public class DBConnection {
 
-    private static DBConnection instance;   // Singleton instance
-    private Connection connection;
+    private static DBConnection instance;
 
-    private static final String URL = "jdbc:mysql://localhost:3306/oceanview_hms";
-    private static final String USER = "root";
-    private static final String PASS = ""; // change if needed
+    private static final String DEFAULT_URL = "jdbc:mysql://localhost:3306/oceanview_hms";
+    private static final String DEFAULT_USER = "root";
+    private static final String DEFAULT_PASS = "";
 
-    // private constructor (Singleton)
     private DBConnection() {
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            this.connection = DriverManager.getConnection(URL, USER, PASS);
-            System.out.println("DB Connected Successfully");
+            String url = System.getProperty("db.url", DEFAULT_URL);
+
+           
+            if (url.startsWith("jdbc:h2")) {
+                Class.forName(System.getProperty("db.driver", "org.h2.Driver"));
+            } else {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // get instance
     public static DBConnection getInstance() {
         if (instance == null) {
             synchronized (DBConnection.class) {
-                if (instance == null) {
-                    instance = new DBConnection();
-                }
+                if (instance == null) instance = new DBConnection();
             }
         }
         return instance;
     }
 
-    // return connection
-    public Connection getConnection() {
-        return connection;
+    public Connection getConnection() throws SQLException {
+        String url = System.getProperty("db.url", DEFAULT_URL);
+        String user = System.getProperty("db.user", DEFAULT_USER);
+        String pass = System.getProperty("db.pass", DEFAULT_PASS);
+        return DriverManager.getConnection(url, user, pass);
     }
 }
-

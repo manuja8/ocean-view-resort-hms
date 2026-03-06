@@ -18,7 +18,7 @@
       <div class="pagebar">
         <div>
           <h2>Payments</h2>
-          <div class="subtitle">Process and view payments (Reception/Admin).</div>
+          <div class="subtitle">Process and view payments </div>
         </div>
 
         <div class="toolbar">
