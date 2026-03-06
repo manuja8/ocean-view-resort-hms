@@ -1,0 +1,33 @@
+name: CI Workflow
+
+# Trigger workflow on push to development or pull requests
+on:
+  push:
+    branches:
+      - development
+  pull_request:
+    branches:
+      - development
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Step 1: Checkout code
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Step 2: Set up Java (replace this with your environment if not using Java)
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+
+    # Step 3: Build and test your project
+    - name: Build with Maven
+      run: mvn clean install
+
+    # Step 4: Run tests (JUnit or other testing framework)
+    - name: Run tests
+      run: mvn test
